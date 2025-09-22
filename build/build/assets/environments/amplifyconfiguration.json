@@ -1,7 +1,0 @@
-{
-  "version": "1",
-  "auth": {
-    "user_pool_id": "",
-    "user_pool_client_id": ""
-  }
-}
