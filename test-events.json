@@ -1,0 +1,29 @@
+{
+  "create": {
+    "operation": "create",
+    "SkillAssessmentId": "test123",
+    "Employee": "John Doe",
+    "Skill": "Python",
+    "Current": "Beginner",
+    "Target": "Intermediate"
+  },
+  "list": {
+    "operation": "list"
+  },
+  "read": {
+    "operation": "read",
+    "SkillAssessmentId": "test123"
+  },
+  "update": {
+    "operation": "update",
+    "SkillAssessmentId": "test123",
+    "Employee": "John Doe",
+    "Skill": "Python",
+    "Current": "Intermediate",
+    "Target": "Advanced"
+  },
+  "delete": {
+    "operation": "delete",
+    "SkillAssessmentId": "test123"
+  }
+}
