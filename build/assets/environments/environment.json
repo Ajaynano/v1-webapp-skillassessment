@@ -1,6 +1,6 @@
 {
   "apiUrl": "https://68sje39s3m.execute-api.us-east-1.amazonaws.com/Prod/skills-assessments",
-  "lpApiUrl": "",
+  "lpApiUrl": "https://zblsje9px2.execute-api.us-east-1.amazonaws.com/Prod/learning-path",
   "quicksightEmbeddingApiUrl": "",
   "dashboardID": "",
   "userPoolId": "us-east-1_9blBXIEy6",
