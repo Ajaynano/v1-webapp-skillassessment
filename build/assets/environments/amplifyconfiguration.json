@@ -1,3 +1,7 @@
 {
-  "version": "1"
+  "version": "1",
+  "auth": {
+    "user_pool_id": "us-east-1_9blBXIEy6",
+    "user_pool_client_id": "6c8875aikksoet4il32bdi7v5o"
+  }
 }

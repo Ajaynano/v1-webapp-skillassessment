@@ -1,4 +1,8 @@
 {
   "apiUrl": "",
-  "lpApiUrl": ""
+  "lpApiUrl": "",
+  "quicksightEmbeddingApiUrl": "",
+  "dashboardID": "",
+  "userPoolId": "us-east-1_9blBXIEy6",
+  "userPoolClientId": "6c8875aikksoet4il32bdi7v5o"
 }
