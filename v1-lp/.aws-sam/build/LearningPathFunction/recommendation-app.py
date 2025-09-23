@@ -47,65 +47,77 @@ def lambda_handler(event, context):
         }
 
 def get_recommendations(skill, current_level, target_level):
+    # Normalize skill names
+    skill_mapping = {
+        'cloudazure': 'cloud-azure',
+        'azure': 'cloud-azure',
+        'cloudaws': 'cloud-aws',
+        'aws': 'cloud-aws'
+    }
+    
+    # Clean and normalize the skill name
+    clean_skill = skill.lower().replace(' ', '').replace('-', '')
+    normalized_skill = skill_mapping.get(clean_skill, skill.lower().replace(' - ', '-').replace(' ', '-'))
+    
     recommendations = {
         'ai': {
             ('beginner', 'basic'): [
-                {'name': 'Introduction to Artificial Intelligence', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://coursera.org/learn/introduction-to-ai'},
-                {'name': 'AI Fundamentals', 'source': 'edX', 'duration': '3 weeks', 'url': 'https://edx.org/course/artificial-intelligence'}
+                {'name': 'Introduction to Artificial Intelligence', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://www.coursera.org/learn/introduction-to-ai'},
+                {'name': 'AI For Everyone', 'source': 'Coursera', 'duration': '3 weeks', 'url': 'https://www.coursera.org/learn/ai-for-everyone'}
             ],
             ('basic', 'intermediate'): [
-                {'name': 'Machine Learning Basics', 'source': 'Coursera', 'duration': '6 weeks', 'url': 'https://coursera.org/learn/machine-learning'},
-                {'name': 'Deep Learning Fundamentals', 'source': 'Udacity', 'duration': '8 weeks', 'url': 'https://udacity.com/course/deep-learning'}
+                {'name': 'Machine Learning Course', 'source': 'Coursera', 'duration': '11 weeks', 'url': 'https://www.coursera.org/learn/machine-learning'},
+                {'name': 'Deep Learning Specialization', 'source': 'Coursera', 'duration': '4 months', 'url': 'https://www.coursera.org/specializations/deep-learning'}
             ]
         },
         'python': {
             ('beginner', 'intermediate'): [
-                {'name': 'Python Intermediate Programming', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://coursera.org/python-intermediate'},
-                {'name': 'Data Structures in Python', 'source': 'Udemy', 'duration': '3 weeks', 'url': 'https://udemy.com/python-data-structures'}
+                {'name': 'Python for Everybody', 'source': 'Coursera', 'duration': '8 months', 'url': 'https://www.coursera.org/specializations/python'},
+                {'name': 'Complete Python Bootcamp', 'source': 'Udemy', 'duration': '22 hours', 'url': 'https://www.udemy.com/course/complete-python-bootcamp/'}
             ]
         },
         'java': {
             ('beginner', 'intermediate'): [
-                {'name': 'Java Programming Fundamentals', 'source': 'Coursera', 'duration': '5 weeks', 'url': 'https://coursera.org/java-fundamentals'}
+                {'name': 'Java Programming and Software Engineering', 'source': 'Coursera', 'duration': '5 months', 'url': 'https://www.coursera.org/specializations/java-programming'}
             ]
         },
         'data': {
             ('beginner', 'intermediate'): [
-                {'name': 'Data Analysis with Python', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://coursera.org/data-analysis-python'}
+                {'name': 'Data Science Specialization', 'source': 'Coursera', 'duration': '11 months', 'url': 'https://www.coursera.org/specializations/jhu-data-science'}
             ]
         },
         'cloud-azure': {
             ('beginner', 'basic'): [
-                {'name': 'Azure Fundamentals', 'source': 'Microsoft Learn', 'duration': '3 weeks', 'url': 'https://learn.microsoft.com/azure-fundamentals'},
-                {'name': 'Introduction to Azure Services', 'source': 'Pluralsight', 'duration': '2 weeks', 'url': 'https://pluralsight.com/azure-intro'}
+                {'name': 'Azure Fundamentals AZ-900', 'source': 'Microsoft Learn', 'duration': '3 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/azure-fundamentals/'},
+                {'name': 'Azure Fundamentals', 'source': 'Pluralsight', 'duration': '6 hours', 'url': 'https://www.pluralsight.com/paths/azure-fundamentals'}
             ],
             ('basic', 'intermediate'): [
-                {'name': 'Azure Administrator Associate', 'source': 'Microsoft Learn', 'duration': '8 weeks', 'url': 'https://learn.microsoft.com/azure-administrator'},
-                {'name': 'Azure Solutions Architect', 'source': 'Udemy', 'duration': '10 weeks', 'url': 'https://udemy.com/azure-architect'}
+                {'name': 'Azure Administrator AZ-104', 'source': 'Microsoft Learn', 'duration': '8 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/az-104-administrator-prerequisites/'},
+                {'name': 'Azure Solutions Architect AZ-305', 'source': 'Microsoft Learn', 'duration': '10 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/microsoft-azure-architect-design-prerequisites/'}
             ]
         },
         'cloud-aws': {
             ('beginner', 'basic'): [
-                {'name': 'AWS Cloud Practitioner', 'source': 'AWS Training', 'duration': '4 weeks', 'url': 'https://aws.amazon.com/training/cloud-practitioner'},
-                {'name': 'Introduction to AWS Services', 'source': 'Coursera', 'duration': '3 weeks', 'url': 'https://coursera.org/aws-intro'}
+                {'name': 'AWS Cloud Practitioner', 'source': 'AWS Training', 'duration': '4 weeks', 'url': 'https://aws.amazon.com/training/learn-about/cloud-practitioner/'},
+                {'name': 'AWS Fundamentals', 'source': 'Coursera', 'duration': '4 months', 'url': 'https://www.coursera.org/specializations/aws-fundamentals'}
             ],
             ('basic', 'intermediate'): [
-                {'name': 'AWS Solutions Architect Associate', 'source': 'AWS Training', 'duration': '12 weeks', 'url': 'https://aws.amazon.com/training/architect-associate'},
-                {'name': 'AWS Developer Associate', 'source': 'A Cloud Guru', 'duration': '8 weeks', 'url': 'https://acloudguru.com/aws-developer'}
+                {'name': 'AWS Solutions Architect Associate', 'source': 'AWS Training', 'duration': '12 weeks', 'url': 'https://aws.amazon.com/training/learn-about/architect/'},
+                {'name': 'AWS Developer Associate', 'source': 'A Cloud Guru', 'duration': '8 weeks', 'url': 'https://acloudguru.com/course/aws-certified-developer-associate'}
             ]
         },
         '.net': {
             ('beginner', 'basic'): [
-                {'name': '.NET Core Fundamentals', 'source': 'Microsoft Learn', 'duration': '4 weeks', 'url': 'https://learn.microsoft.com/dotnet-fundamentals'},
-                {'name': 'C# Programming Basics', 'source': 'Pluralsight', 'duration': '3 weeks', 'url': 'https://pluralsight.com/csharp-basics'}
+                {'name': '.NET Core Fundamentals', 'source': 'Microsoft Learn', 'duration': '4 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/build-dotnet-applications-csharp/'},
+                {'name': 'C# Fundamentals', 'source': 'Pluralsight', 'duration': '5 hours', 'url': 'https://www.pluralsight.com/courses/csharp-fundamentals-dev'}
             ],
             ('basic', 'intermediate'): [
-                {'name': 'ASP.NET Core Web Development', 'source': 'Microsoft Learn', 'duration': '6 weeks', 'url': 'https://learn.microsoft.com/aspnet-core'},
-                {'name': 'Entity Framework Core', 'source': 'Udemy', 'duration': '4 weeks', 'url': 'https://udemy.com/entity-framework-core'}
+                {'name': 'ASP.NET Core Web API', 'source': 'Microsoft Learn', 'duration': '6 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/create-web-api-with-aspnet-core/'},
+                {'name': 'Entity Framework Core', 'source': 'Pluralsight', 'duration': '4 hours', 'url': 'https://www.pluralsight.com/courses/entity-framework-core-getting-started'}
             ]
         }
     }
     
-    return recommendations.get(skill, {}).get((current_level, target_level), [
-        {'name': 'General Programming Course', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://coursera.org/programming'}
+    return recommendations.get(normalized_skill, {}).get((current_level, target_level), [
+        {'name': 'General Programming Course', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://www.coursera.org/courses?query=programming'}
     ])

@@ -3,34 +3,110 @@ import boto3
 import os
 from decimal import Decimal
 import uuid
+from datetime import datetime, timedelta
+import re
 
 def decimal_default(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
 
+def calculate_dates(duration):
+    """Calculate start and end dates based on duration"""
+    start_date = datetime.now()
+    
+    # Parse duration and calculate end date
+    if 'week' in duration.lower():
+        weeks = int(re.findall(r'\d+', duration)[0])
+        end_date = start_date + timedelta(weeks=weeks)
+    elif 'month' in duration.lower():
+        months = int(re.findall(r'\d+', duration)[0])
+        end_date = start_date + timedelta(days=months * 30)
+    elif 'hour' in duration.lower():
+        hours = int(re.findall(r'\d+', duration)[0])
+        # Assume 2 hours per day, 5 days per week
+        days = (hours / 2) * (7/5)
+        end_date = start_date + timedelta(days=int(days))
+    else:
+        # Default to 4 weeks if duration format is unclear
+        end_date = start_date + timedelta(weeks=4)
+    
+    return start_date.strftime('%d-%m-%Y'), end_date.strftime('%d-%m-%Y')
+
 def get_recommendations(skill, current_level, target_level):
+    # Normalize skill names
+    skill_mapping = {
+        'cloudazure': 'cloud-azure',
+        'azure': 'cloud-azure',
+        'cloudaws': 'cloud-aws',
+        'aws': 'cloud-aws'
+    }
+    
+    # Clean and normalize the skill name
+    clean_skill = skill.lower().replace(' ', '').replace('-', '')
+    normalized_skill = skill_mapping.get(clean_skill, skill.lower().replace(' - ', '-').replace(' ', '-'))
+    
     recommendations = {
         'ai': {
             ('beginner', 'basic'): [
-                {'name': 'Introduction to Artificial Intelligence', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://coursera.org/learn/introduction-to-ai'},
-                {'name': 'AI Fundamentals', 'source': 'edX', 'duration': '3 weeks', 'url': 'https://edx.org/course/artificial-intelligence'}
+                {'name': 'Introduction to Artificial Intelligence', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://www.coursera.org/learn/introduction-to-ai'},
+                {'name': 'AI For Everyone', 'source': 'Coursera', 'duration': '3 weeks', 'url': 'https://www.coursera.org/learn/ai-for-everyone'}
+            ],
+            ('basic', 'intermediate'): [
+                {'name': 'Machine Learning Course', 'source': 'Coursera', 'duration': '11 weeks', 'url': 'https://www.coursera.org/learn/machine-learning'},
+                {'name': 'Deep Learning Specialization', 'source': 'Coursera', 'duration': '4 months', 'url': 'https://www.coursera.org/specializations/deep-learning'}
             ]
         },
         'python': {
             ('beginner', 'intermediate'): [
-                {'name': 'Python Intermediate Programming', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://coursera.org/python-intermediate'}
+                {'name': 'Python for Everybody', 'source': 'Coursera', 'duration': '8 months', 'url': 'https://www.coursera.org/specializations/python'},
+                {'name': 'Complete Python Bootcamp', 'source': 'Udemy', 'duration': '22 hours', 'url': 'https://www.udemy.com/course/complete-python-bootcamp/'}
             ]
         },
         'java': {
             ('beginner', 'intermediate'): [
-                {'name': 'Java Programming Fundamentals', 'source': 'Coursera', 'duration': '5 weeks', 'url': 'https://coursera.org/java-fundamentals'}
+                {'name': 'Java Programming and Software Engineering', 'source': 'Coursera', 'duration': '5 months', 'url': 'https://www.coursera.org/specializations/java-programming'}
+            ]
+        },
+        'data': {
+            ('beginner', 'intermediate'): [
+                {'name': 'Data Science Specialization', 'source': 'Coursera', 'duration': '11 months', 'url': 'https://www.coursera.org/specializations/jhu-data-science'}
+            ]
+        },
+        'cloud-azure': {
+            ('beginner', 'basic'): [
+                {'name': 'Azure Fundamentals AZ-900', 'source': 'Microsoft Learn', 'duration': '3 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/azure-fundamentals/'},
+                {'name': 'Azure Fundamentals', 'source': 'Pluralsight', 'duration': '6 hours', 'url': 'https://www.pluralsight.com/paths/azure-fundamentals'}
+            ],
+            ('basic', 'intermediate'): [
+                {'name': 'Azure Administrator AZ-104', 'source': 'Microsoft Learn', 'duration': '8 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/az-104-administrator-prerequisites/'},
+                {'name': 'Azure Solutions Architect AZ-305', 'source': 'Microsoft Learn', 'duration': '10 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/microsoft-azure-architect-design-prerequisites/'}
+            ]
+        },
+        'cloud-aws': {
+            ('beginner', 'basic'): [
+                {'name': 'AWS Cloud Practitioner', 'source': 'AWS Training', 'duration': '4 weeks', 'url': 'https://aws.amazon.com/training/learn-about/cloud-practitioner/'},
+                {'name': 'AWS Fundamentals', 'source': 'Coursera', 'duration': '4 months', 'url': 'https://www.coursera.org/specializations/aws-fundamentals'}
+            ],
+            ('basic', 'intermediate'): [
+                {'name': 'AWS Solutions Architect Associate', 'source': 'AWS Training', 'duration': '12 weeks', 'url': 'https://aws.amazon.com/training/learn-about/architect/'},
+                {'name': 'AWS Developer Associate', 'source': 'A Cloud Guru', 'duration': '8 weeks', 'url': 'https://acloudguru.com/course/aws-certified-developer-associate'}
+            ]
+        },
+        '.net': {
+            ('beginner', 'basic'): [
+                {'name': '.NET Core Fundamentals', 'source': 'Microsoft Learn', 'duration': '4 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/build-dotnet-applications-csharp/'},
+                {'name': 'C# Fundamentals', 'source': 'Pluralsight', 'duration': '5 hours', 'url': 'https://www.pluralsight.com/courses/csharp-fundamentals-dev'}
+            ],
+            ('basic', 'intermediate'): [
+                {'name': 'ASP.NET Core Web API', 'source': 'Microsoft Learn', 'duration': '6 weeks', 'url': 'https://docs.microsoft.com/en-us/learn/paths/create-web-api-with-aspnet-core/'},
+                {'name': 'Entity Framework Core', 'source': 'Pluralsight', 'duration': '4 hours', 'url': 'https://www.pluralsight.com/courses/entity-framework-core-getting-started'}
             ]
         }
     }
     
-    return recommendations.get(skill, {}).get((current_level, target_level), [
-        {'name': 'General Programming Course', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://coursera.org/programming'}
+    return recommendations.get(normalized_skill, {}).get((current_level, target_level), [
+        {'name': 'General Programming Course', 'source': 'Coursera', 'duration': '4 weeks', 'url': 'https://www.coursera.org/courses?query=programming'}
     ])
 
 dynamodb = boto3.resource('dynamodb')
@@ -107,6 +183,8 @@ def lambda_handler(event, context):
             
             for rec in recommendations:
                 learning_path_id = str(uuid.uuid4())
+                start_date, end_date = calculate_dates(rec['duration'])
+                
                 item = {
                     'LearningPathId': learning_path_id,
                     'Employee': employee,
@@ -117,8 +195,8 @@ def lambda_handler(event, context):
                     'Duration': rec['duration'],
                     'Url': rec['url'],
                     'Completed': False,
-                    'StateDate': '',
-                    'EndDate': ''
+                    'StateDate': start_date,
+                    'EndDate': end_date
                 }
                 print(f"Saving item to DynamoDB: {json.dumps(item)}")
                 table.put_item(Item=item)
@@ -134,8 +212,8 @@ def lambda_handler(event, context):
                     'Duration': rec['duration'],
                     'Url': rec['url'],
                     'Completed': False,
-                    'StateDate': '',
-                    'EndDate': ''
+                    'StateDate': start_date,
+                    'EndDate': end_date
                 })
             
             print(f"Created {len(created_paths)} learning paths from skill assessment")
