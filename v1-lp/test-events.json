@@ -1,0 +1,40 @@
+{
+  "create": {
+    "operation": "create",
+    "Employee": "John Doe",
+    "Skill": "Java",
+    "Level": "Intermediate",
+    "Name": "Advanced Java Programming",
+    "Source": "Coursera",
+    "Duration": "6 weeks",
+    "Url": "https://coursera.org/java-course",
+    "Completed": false,
+    "StateDate": "25-08-2025",
+    "EndDate": "06-10-2025"
+  },
+  "list": {
+    "operation": "list"
+  },
+  "read": {
+    "operation": "read",
+    "LearningPathId": "test123"
+  },
+  "update": {
+    "operation": "update",
+    "LearningPathId": "test123",
+    "Employee": "John Doe",
+    "Skill": "Python",
+    "Level": "Advanced",
+    "Name": "Data Engineering with Python",
+    "Source": "Udemy",
+    "Duration": "3 weeks",
+    "Url": "https://udemy.com/python-course",
+    "Completed": true,
+    "StateDate": "01-09-2025",
+    "EndDate": "21-09-2025"
+  },
+  "delete": {
+    "operation": "delete",
+    "LearningPathId": "test123"
+  }
+}

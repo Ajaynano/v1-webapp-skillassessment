@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Learning Path API
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 128
+    Runtime: python3.11
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    Description: Environment name
+Resources:
+  LearningPathTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: ${Environment}-learning-paths
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+      - AttributeName: LearningPathId
+        AttributeType: S
+      KeySchema:
+      - AttributeName: LearningPathId
+        KeyType: HASH
+  LearningPathFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-learning-path-api
+      CodeUri: LearningPathFunction
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: LearningPathTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: LearningPathTable
+      Events:
+        LearningPathApi:
+          Type: Api
+          Properties:
+            Path: /learning-path
+            Method: post
+            RestApiId:
+              Ref: LearningPathApi
+        LearningPathGetApi:
+          Type: Api
+          Properties:
+            Path: /learning-path
+            Method: get
+            RestApiId:
+              Ref: LearningPathApi
+    Metadata:
+      SamResourceId: LearningPathFunction
+  RecommendationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-recommendation-api
+      CodeUri: RecommendationFunction
+      Handler: recommendation-app.lambda_handler
+      Events:
+        RecommendationApi:
+          Type: Api
+          Properties:
+            Path: /recommendations
+            Method: post
+            RestApiId:
+              Ref: LearningPathApi
+    Metadata:
+      SamResourceId: RecommendationFunction
+  LearningPathApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name:
+        Fn::Sub: ${Environment}-learning-path-api
+      StageName: Prod
+      Cors:
+        AllowMethods: '''GET,POST,PUT,DELETE,OPTIONS'''
+        AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Accept,Origin,Referer'''
+        AllowOrigin: '''*'''
+        MaxAge: '''86400'''
+Outputs:
+  LearningPathApiUrl:
+    Description: API Gateway endpoint URL for Learning Path API
+    Value:
+      Fn::Sub: https://${LearningPathApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/learning-path
+    Export:
+      Name:
+        Fn::Sub: ${Environment}-learning-path-api-url
+  RecommendationApiUrl:
+    Description: API Gateway endpoint URL for Recommendations API
+    Value:
+      Fn::Sub: https://${LearningPathApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/recommendations
+    Export:
+      Name:
+        Fn::Sub: ${Environment}-recommendation-api-url
+  LearningPathTableName:
+    Description: DynamoDB table name for Learning Paths
+    Value:
+      Ref: LearningPathTable
+    Export:
+      Name:
+        Fn::Sub: ${Environment}-learning-path-table-name

@@ -1,0 +1,4 @@
+{
+  "httpMethod": "POST",
+  "body": "{\"SkillAssessmentId\": \"c6bf654b-3001-42d0-a13e-54ca33f1a737\", \"Employee\": \"Kalaiselvan Pandiyan\", \"Skill\": \"AI\", \"Current\": \"Beginner\", \"Target\": \"Basic\"}"
+}

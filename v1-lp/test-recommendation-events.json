@@ -1,0 +1,7 @@
+{
+  "httpMethod": "POST",
+  "body": "{\"skill\": \"ai\", \"current_level\": \"beginner\", \"target_level\": \"basic\", \"employee\": \"Kalaiselvan Pandiyan\", \"skill_assessment_id\": \"c6bf654b-3001-42d0-a13e-54ca33f1a737\"}",
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}
