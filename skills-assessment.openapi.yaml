@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: Skills Assessment API
+  description: |
+    API for managing employee skill assessments (list, read, create, update, delete).
+  version: 0.1.0
+paths:
+  /skills-assessments:
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        200:
+          '$ref': '#/components/responses/CorsResponse'
+    post:
+      summary: Handles CRUD operations for the Skills Assessment API.
+      description: |
+        A single endpoint that supports multiple operations through the `operation` field in the request body.
+        - **list**: Get all skill assessments  
+        - **read**: Get a single skill assessment by ID  
+        - **create**: Create a new skill assessment  
+        - **update**: Update an existing skill assessment  
+        - **delete**: Delete a skill assessment  
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ListRequest'
+                - $ref: '#/components/schemas/ReadRequest'
+                - $ref: '#/components/schemas/CreateRequest'
+                - $ref: '#/components/schemas/UpdateRequest'
+                - $ref: '#/components/schemas/DeleteRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Missing operation
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    ListRequest:
+      type: object
+      required: [operation]
+      properties:
+        operation:
+          type: string
+          example: list
+
+    ReadRequest:
+      type: object
+      required: [operation, SkillAssessmentId]
+      properties:
+        operation:
+          type: string
+          example: read
+        SkillAssessmentId:
+          type: string
+          example: test123
+
+    CreateRequest:
+      type: object
+      required: [operation, SkillAssessmentId, Employee, Skill, Current, Target]
+      properties:
+        operation:
+          type: string
+          example: create
+        SkillAssessmentId:
+          type: string
+          example: test123
+        Employee:
+          type: string
+          example: Saravanan Vijayakumar
+        Skill:
+          type: string
+          example: Java
+        Current:
+          type: string
+          example: Intermediate
+        Target:
+          type: string
+          example: Advanced
+
+    UpdateRequest:
+      type: object
+      required: [operation, SkillAssessmentId, Employee, Skill, Current, Target]
+      properties:
+        operation:
+          type: string
+          example: update
+        SkillAssessmentId:
+          type: string
+          example: test123
+        Employee:
+          type: string
+          example: Saravanan Vijayakumar
+        Skill:
+          type: string
+          example: Python
+        Current:
+          type: string
+          example: Intermediate
+        Target:
+          type: string
+          example: Advanced
+
+    DeleteRequest:
+      type: object
+      required: [operation, SkillAssessmentId]
+      properties:
+        operation:
+          type: string
+          example: delete
+        SkillAssessmentId:
+          type: string
+          example: test123
+
+  responses:
+      CorsResponse:
+        description: Default response for CORS method
+        headers:
+          Access-Control-Allow-Origin:
+            schema:
+              type: string
+          Access-Control-Allow-Methods:
+            schema:
+              type: string
+          Access-Control-Allow-Headers:
+            schema:
+              type: string
+          Access-Control-Allow-Credentials:
+            schema:
+              type: string
+        content: {}

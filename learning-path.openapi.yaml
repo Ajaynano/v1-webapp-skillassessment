@@ -1,0 +1,241 @@
+openapi: 3.0.3
+info:
+  title: Learning Path API
+  description: API for managing and generating employee learning paths based on skill, current level, and target level.
+  version: 0.1.0
+paths:
+  /learning-path:
+    post:
+      summary: Perform operations on Learning Paths
+      description: >
+        A single endpoint that supports multiple operations through the `operation` field in the request body.  
+        - **list**: Get all learning paths  
+        - **read**: Get a single learning path by ID  
+        - **create**: Create a new learning path  
+        - **update**: Update an existing learning path  
+        - **delete**: Delete a learning path  
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ListRequest'
+                - $ref: '#/components/schemas/ReadRequest'
+                - $ref: '#/components/schemas/CreateRequest'
+                - $ref: '#/components/schemas/UpdateRequest'
+                - $ref: '#/components/schemas/DeleteRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Missing or invalid operation
+        '500':
+          description: Internal server error
+
+  /_user_request_/generate-learning-path:
+    post:
+      summary: Generate learning path
+      description: Takes skill, current level, and target level as input and generates a recommended learning path.
+      operationId: generateLearningPath
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - Skill
+                - Current
+                - Target
+              properties:
+                Skill:
+                  type: string
+                  example: "Java"
+                Current:
+                  type: string
+                  description: User's current skill level
+                  example: "Beginner"
+                Target:
+                  type: string
+                  description: User's target skill level
+                  example: "Intermediate"
+      responses:
+        '200':
+          description: Positive Scenario - Skill available in context
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  skill:
+                    type: string
+                    example: "Java"
+                  user_current_level:
+                    type: string
+                    example: "Beginner"
+                  user_target_level:
+                    type: string
+                    example: "Intermediate"
+                  target_level_topics:
+                    type: string
+                    example: "Advanced collections, concurrency, multithreading"
+                  learning_path:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        level:
+                          type: string
+                          example: "Intermediate"
+                        description:
+                          type: string
+                          example: "Master core Java and data structures"
+                        course_name:
+                          type: string
+                          example: "Java Intermediate Course"
+                        course_description:
+                          type: string
+                          example: "Covers OOP, collections, and exception handling"
+                        duration:
+                          type: string
+                          example: "6 weeks"
+                        course_url:
+                          type: string
+                          example: "https://example.com/java-course"
+        '404':
+          description: Negative Scenario - Skill not available in context
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No data available in context"
+        '400':
+          description: Invalid input (missing fields or bad request)
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    ListRequest:
+      type: object
+      required: [operation]
+      properties:
+        operation:
+          type: string
+          example: list
+
+    ReadRequest:
+      type: object
+      required: [operation, LearningPathId]
+      properties:
+        operation:
+          type: string
+          example: read
+        LearningPathId:
+          type: string
+          example: test123
+
+    CreateRequest:
+      type: object
+      required: [operation, Employee, Skill, Level, Name, Source, Duration, Url, Completed, StateDate, EndDate]
+      properties:
+        operation:
+          type: string
+          example: create
+        Employee:
+          type: string
+          example: Saravanan Vijayakumar
+        Skill:
+          type: string
+          example: Java
+        Level:
+          type: string
+          example: Intermediate
+        Name:
+          type: string
+          example: Advanced Java
+        Source:
+          type: string
+          example: Coursera
+        Duration:
+          type: string
+          example: 1 week
+        Url:
+          type: string
+          format: uri
+          example: https://coursera.org/java-course
+        Completed:
+          type: boolean
+          example: false
+        StateDate:
+          type: string
+          description: Start date (DD-MM-YYYY)
+          example: 25-08-2025
+        EndDate:
+          type: string
+          description: End date (DD-MM-YYYY)
+          example: 25-08-2025
+
+    UpdateRequest:
+      type: object
+      required: [operation, LearningPathId, Employee, Skill, Level, Name, Source, Duration, Url, Completed, StateDate, EndDate]
+      properties:
+        operation:
+          type: string
+          example: update
+        LearningPathId:
+          type: string
+          example: test123
+        Employee:
+          type: string
+          example: Saravanan Vijayakumar
+        Skill:
+          type: string
+          example: Python
+        Level:
+          type: string
+          example: Advanced
+        Name:
+          type: string
+          example: Data Engineering with Python
+        Source:
+          type: string
+          example: Udemy
+        Duration:
+          type: string
+          example: 3 weeks
+        Url:
+          type: string
+          format: uri
+          example: https://udemy.com/python-course
+        Completed:
+          type: boolean
+          example: true
+        StateDate:
+          type: string
+          description: Start date (DD-MM-YYYY)
+          example: 01-09-2025
+        EndDate:
+          type: string
+          description: End date (DD-MM-YYYY)
+          example: 21-09-2025
+
+    DeleteRequest:
+      type: object
+      required: [operation, LearningPathId]
+      properties:
+        operation:
+          type: string
+          example: delete
+        LearningPathId:
+          type: string
+          example: test123
