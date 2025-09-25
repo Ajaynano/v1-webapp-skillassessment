@@ -24,6 +24,18 @@ Resources:
       KeySchema:
       - AttributeName: LearningPathId
         KeyType: HASH
+  RecommendationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: ${Environment}-recommendations
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+      - AttributeName: RecommendationId
+        AttributeType: S
+      KeySchema:
+      - AttributeName: RecommendationId
+        KeyType: HASH
   LearningPathFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -73,6 +85,62 @@ Resources:
               Ref: LearningPathApi
     Metadata:
       SamResourceId: RecommendationFunction
+  BedrockRecommendationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-bedrock-recommendation-api
+      CodeUri: BedrockRecommendationFunction
+      Handler: bedrock-recommendation-app.lambda_handler
+      Timeout: 60
+      Environment:
+        Variables:
+          RECOMMENDATIONS_TABLE:
+            Ref: RecommendationsTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: RecommendationsTable
+      - Statement:
+        - Effect: Allow
+          Action:
+          - bedrock:InvokeModel
+          Resource: arn:aws:bedrock:*::foundation-model/amazon.titan-text-premier-v1:0
+      Events:
+        BedrockRecommendationApi:
+          Type: Api
+          Properties:
+            Path: /bedrock-recommendations
+            Method: post
+            RestApiId:
+              Ref: LearningPathApi
+    Metadata:
+      SamResourceId: BedrockRecommendationFunction
+  GetRecommendationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-get-recommendations-api
+      CodeUri: GetRecommendationsFunction
+      Handler: get-recommendations-app.lambda_handler
+      Environment:
+        Variables:
+          RECOMMENDATIONS_TABLE:
+            Ref: RecommendationsTable
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: RecommendationsTable
+      Events:
+        GetRecommendationApi:
+          Type: Api
+          Properties:
+            Path: /recommendations/{id}
+            Method: get
+            RestApiId:
+              Ref: LearningPathApi
+    Metadata:
+      SamResourceId: GetRecommendationsFunction
   LearningPathApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -99,6 +167,13 @@ Outputs:
     Export:
       Name:
         Fn::Sub: ${Environment}-recommendation-api-url
+  BedrockRecommendationApiUrl:
+    Description: API Gateway endpoint URL for Bedrock AI Recommendations API
+    Value:
+      Fn::Sub: https://${LearningPathApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/bedrock-recommendations
+    Export:
+      Name:
+        Fn::Sub: ${Environment}-bedrock-recommendation-api-url
   LearningPathTableName:
     Description: DynamoDB table name for Learning Paths
     Value:

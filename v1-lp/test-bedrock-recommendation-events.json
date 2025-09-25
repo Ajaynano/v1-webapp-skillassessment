@@ -1,0 +1,4 @@
+{
+  "httpMethod": "POST",
+  "body": "{\"Employee\": \"John Doe\", \"Skill\": \"Python\", \"Current\": \"Beginner\", \"Target\": \"Intermediate\", \"SkillAssessmentId\": \"test-123\"}"
+}

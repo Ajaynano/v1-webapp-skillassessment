@@ -1,0 +1,10 @@
+{
+  "apiUrl": "https://68sje39s3m.execute-api.us-east-1.amazonaws.com/Prod/skills-assessments",
+  "lpApiUrl": "https://zblsje9px2.execute-api.us-east-1.amazonaws.com/Prod/learning-path",
+  "quicksightEmbeddingApiUrl": "https://zblsje9px2.execute-api.us-east-1.amazonaws.com/Prod/dashboard/embed-url/dashboard",
+  "dashboardDataApiUrl": "https://zblsje9px2.execute-api.us-east-1.amazonaws.com/Prod/dashboard/data",
+  "dashboardID": "1ae67e9c-56ef-4d8c-8fee-81595d9e6320",
+  "userPoolId": "us-east-1_9blBXIEy6",
+  "userPoolClientId": "6c8875aikksoet4il32bdi7v5o",
+  "dashboardMode": "data-api"
+}

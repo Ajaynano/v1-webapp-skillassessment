@@ -5,8 +5,9 @@ codeuri = "/mnt/c/Devops/aws-hackthon-day/v1-lp/src"
 runtime = "python3.11"
 architecture = "x86_64"
 handler = "app.lambda_handler"
+source_hash = "1ff58969cbba4df3ce14d95e48d561b5acc5a9ed98ab062041274cd554158f21"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["LearningPathFunction", "RecommendationFunction"]
+functions = ["LearningPathFunction", "RecommendationFunction", "BedrockRecommendationFunction", "GetRecommendationsFunction"]
 
 [layer_build_definitions]

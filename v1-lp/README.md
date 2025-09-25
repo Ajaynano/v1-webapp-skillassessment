@@ -124,6 +124,19 @@ curl -X POST https://zblsje9px2.execute-api.us-east-1.amazonaws.com/Prod/learnin
 
 ## 🎯 Learning Path Recommendations
 
+### Get AI-Powered Recommendations (Bedrock)
+```bash
+curl -X POST https://your-api-gateway-url/Prod/bedrock-recommendations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Employee": "John Doe",
+    "Skill": "Python",
+    "Current": "Beginner",
+    "Target": "Intermediate",
+    "SkillAssessmentId": "optional-assessment-id"
+  }'
+```
+
 ### Get Skill-Based Recommendations (Original Format)
 ```bash
 curl -X POST https://zblsje9px2.execute-api.us-east-1.amazonaws.com/Prod/recommendations \
@@ -157,7 +170,38 @@ curl -X POST https://zblsje9px2.execute-api.us-east-1.amazonaws.com/Prod/recomme
 - `java` - Java Programming
 - `data` - Data Science
 
-**Response:**
+**Bedrock AI Response:**
+```json
+{
+  "recommendation_id": "abc123-def456-ghi789",
+  "recommendations": [
+    {
+      "name": "Python for Data Science and Machine Learning",
+      "source": "Udemy",
+      "duration": "25 hours",
+      "url": "https://www.udemy.com/course/python-for-data-science-and-machine-learning-bootcamp/"
+    },
+    {
+      "name": "Python Programming Specialization",
+      "source": "Coursera",
+      "duration": "5 months",
+      "url": "https://www.coursera.org/specializations/python-3-programming"
+    }
+  ],
+  "employee": "John Doe",
+  "skill": "Python",
+  "current_level": "Beginner",
+  "target_level": "Intermediate",
+  "powered_by": "Amazon Bedrock AI"
+}
+```
+
+### Get Saved Recommendations
+```bash
+curl -X GET https://your-api-gateway-url/Prod/recommendations/abc123-def456-ghi789
+```
+
+**Original Response:**
 ```json
 {
   "recommendations": [
@@ -193,6 +237,7 @@ sam local invoke RecommendationFunction -e test-recommendation-events.json
 sam local start-api
 curl -X POST http://localhost:3000/learning-path -H "Content-Type: application/json" -d @test-events.json
 curl -X POST http://localhost:3000/recommendations -H "Content-Type: application/json" -d @test-recommendation-events.json
+curl -X POST http://localhost:3000/bedrock-recommendations -H "Content-Type: application/json" -d @test-bedrock-recommendation-events.json
 ```
 
 ## 📊 Data Schema
@@ -209,6 +254,17 @@ curl -X POST http://localhost:3000/recommendations -H "Content-Type: application
 - `Completed` (boolean) - Completion status
 - `StateDate` (string) - Start date (DD-MM-YYYY)
 - `EndDate` (string) - End date (DD-MM-YYYY)
+
+### Recommendation Fields
+- `RecommendationId` (string) - Auto-generated UUID
+- `Employee` (string) - Employee name
+- `Skill` (string) - Target skill
+- `CurrentLevel` (string) - Current skill level
+- `TargetLevel` (string) - Target skill level
+- `Recommendations` (array) - List of recommended courses
+- `CreatedAt` (string) - ISO timestamp
+- `Source` (string) - "Bedrock AI" or "Static"
+- `SkillAssessmentId` (string, optional) - Related assessment ID
 
 ## 🛠 Development
 
