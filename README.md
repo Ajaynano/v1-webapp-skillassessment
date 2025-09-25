@@ -258,6 +258,65 @@ terraform destroy
 sam delete --stack-name your-stack-name
 ```
 
+## 🔄 GitHub Integration
+
+### Automated CI/CD with GitHub Actions
+
+The project includes GitHub Actions workflows for automated deployment:
+
+#### Setup GitHub Secrets
+
+Add these secrets to your GitHub repository:
+
+```
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+```
+
+#### Workflows
+
+**Backend Deployment** (`.github/workflows/deploy.yml`):
+- Triggers on push to main/master
+- Builds and deploys SAM applications
+- Deploys both Skills Assessment and Learning Path APIs
+
+**Frontend Deployment** (`.github/workflows/deploy-frontend.yml`):
+- Triggers on changes to `build/` directory
+- Deploys Angular app to S3
+- Invalidates CloudFront cache
+
+#### Manual Deployment
+
+Trigger deployments manually:
+
+```bash
+# Push to trigger backend deployment
+git push origin main
+
+# Trigger frontend deployment
+gh workflow run deploy-frontend.yml
+```
+
+### Repository Setup
+
+```bash
+# Initialize git repository
+git init
+git add .
+git commit -m "Initial commit"
+
+# Add GitHub remote
+git remote add origin https://github.com/your-username/skill-management-portal.git
+git push -u origin main
+```
+
+### Branch Protection
+
+Recommended branch protection rules:
+- Require pull request reviews
+- Require status checks (GitHub Actions)
+- Restrict pushes to main branch
+
 ## 📞 Support
 
 For issues or questions:
