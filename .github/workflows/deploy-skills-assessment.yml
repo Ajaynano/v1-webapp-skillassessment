@@ -1,15 +1,19 @@
-name: Deploy SAM Application
+name: Deploy Skills Assessment API
 
 on:
   workflow_dispatch:
-  pull_request:
+  push:
     branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - 'template.yaml'
+      - 'samconfig.toml'
 
 env:
   AWS_REGION: us-east-1
 
 jobs:
-  deploy:
+  deploy-skills-assessment:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,15 +33,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
     
-    - name: Build SAM application
+    - name: Build Skills Assessment SAM application
       run: sam build
     
-    - name: Deploy SAM application
-      run: |
-        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
-    
-    - name: Deploy Learning Path API
-      working-directory: ./v1-lp
-      run: |
-        sam build
-        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+    - name: Deploy Skills Assessment SAM application
+      run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
